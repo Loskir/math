@@ -1,0 +1,12 @@
+{
+  "name": "math",
+  "version": "1.2.0",
+  "dependencies": {
+    "puppeteer": "^1.11.0",
+    "mz": "^2.7.0",
+    "koa": "^2.6.2",
+    "koa-router": "^7.4.0",
+    "randomstring": "^1.1.5",
+    "koa-bodyparser": "^4.2.1"
+  }
+}
