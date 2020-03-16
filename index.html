@@ -1,80 +1,77 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Math</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--jquery-->
-    <script src="files/jquery/jquery-3.3.1.min.js"></script>
-    <!--bootstrap-->
-    <link rel='stylesheet' href='files/bootstrap/bootstrap.min.css' type='text/css' media='all'>
-    <script src="files/bootstrap/bootstrap.min.js"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>
-    <link rel="stylesheet" href="files/guppy/guppy-default.min.css">
-    <link rel="stylesheet" href="files/guppy/guppy-default-osk.min.css">
-    <script type="text/javascript" src="files/guppy/guppy.min.js"></script>
-    <script type="text/javascript" src="files/guppy/guppy_osk.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script>
-        window.onload = () => {
-            Guppy.init({
-                "osk":new GuppyOSK({"goto_tab":"qwerty","attach":"focus"}),
-                "path": "files/guppy/",
-                "symbols": "files/guppy/sym/symbols.json"
-            });
-            window.g1 = new Guppy("guppy1");
-        }
-    </script>
-    <style>
-        .guppy_osk_key {
-            line-height: 30px!important;
-            font-size: 15px!important;
-        }
-        body {
-            margin: 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Math</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--bootstrap-->
+  <link rel='stylesheet' href='files/bootstrap/bootstrap.min.css' type='text/css' media='all'>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+  <link rel="stylesheet" href="files/guppy/guppy-default.min.css">
+  <link rel="stylesheet" href="files/guppy/guppy-default-osk.min.css">
+  <script type="text/javascript" src="files/guppy/guppy.min.js"></script>
+  <script type="text/javascript" src="files/guppy/guppy_osk.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+    window.onload = () => {
+      Guppy.use_osk(new GuppyOSK({'goto_tab': 'arithmetic', 'attach': 'focus'}))
+      Guppy.init({
+        'path': 'files/guppy/',
+        'symbols': 'files/guppy/sym/symbols.json',
+      })
+      window.g1 = new Guppy('guppy1')
+    }
+  </script>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
 </head>
 <body>
 <div class="container d-flex flex-column align-items-start">
-    <div id="guppy1" style="width:100%;"></div>
-    <button class="btn btn-primary my-3" onclick="send()">Отправить</button>
-    <div class="input-group">
-        <input class="form-control" placeholder="URL" id="url" readonly>
-        <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard()">Копировать</button>
-        </div>
+  <div id="guppy1" style="width:100%;"></div>
+  <button class="btn btn-primary my-3" onclick="send()">Отправить</button>
+  <div class="input-group">
+    <input class="form-control" placeholder="URL" id="url" readonly>
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard()">Копировать</button>
     </div>
+  </div>
 </div>
 
 <script>
-    let send = () => {
-        let val = window.g1.engine.get_content('latex');
-        axios({
-            method: 'POST',
-            url: 'http://math.loskir.ru/add',
-            headers: { 'content-type': 'application/json' },
-            data: {
-                data: val
-            }
-        })
-            .then(r => {
-                let json = r.data;
-                console.log(json);
-                if (!json.ok) {
-                    alert(json.error);
-                    return
-                }
-                $('#url').val(`math.loskir.ru/${json.id}`)
-            })
-    };
-    function copyToClipboard () {
-        let el = $('#url');
-        el.select();
-        let successful = document.execCommand('copy');
-        if (successful) console.log('Copied Successfully!');
-        else console.warn('Unable to copy');
+  let send = () => {
+    let val = window.g1.engine.get_content('latex')
+    axios({
+      method: 'POST',
+      url: 'https://math.loskir.ru/add',
+      headers: {'content-type': 'application/json'},
+      data: {
+        data: val,
+      },
+    })
+      .then(r => {
+        let json = r.data
+        console.log(json)
+        if (!json.ok) {
+          alert(json.error)
+          return
+        }
+        document.getElementById('url').value = `math.loskir.ru/${json.id}`
+      })
+  }
+
+  function copyToClipboard() {
+    let el = document.getElementById('url')
+    el.select()
+    let successful = document.execCommand('copy')
+    if (successful) {
+      console.log('Copied Successfully!')
+    } else {
+      console.warn('Unable to copy')
     }
+  }
 </script>
 </body>
 </html>
